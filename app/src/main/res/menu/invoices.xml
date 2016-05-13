@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_main_add_form"
-        android:title="Add Form"
+        android:id="@+id/action_invoices_qr_code"
+        android:title="QR Code"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_main_settings"
-        android:title="Settings"
-        app:showAsAction="never"/>
+    <item android:id="@+id/action_invoices_write_file"
+        android:title="Write File"
+        app:showAsAction="ifRoom"/>
 </menu>
