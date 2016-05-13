@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
@@ -36,11 +35,20 @@ public class InvoicesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        invoices = new ArrayList<>();
+        invoices = getInvoices();
         setContentView(R.layout.activity_invoices);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.invoices_toolbar);
         setSupportActionBar(myToolbar);
+    }
+
+    private ArrayList<String> getInvoices() {
+        Bundle bundle = getIntent().getExtras();
+        int formId = -1;
+        if(bundle != null)
+            formId = bundle.getInt("formId");
+
+        return new ArrayList<String>();
     }
 
     @Override
@@ -58,31 +66,14 @@ public class InvoicesActivity extends AppCompatActivity {
                 readQRCode();
                 return true;
             case R.id.action_invoices_write_file:
-                settings();
+                writeFile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void settings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void writeFileActionPerformed(View v) {
-        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermission) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_WRITE_STORAGE);
-        } else {
-            WriteFile();
-        }
-    }
-
-    public void readQRCode() {
+    private void readQRCode() {
         try {
             Intent intent = new Intent(ACTION_SCAN);
             intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
@@ -92,7 +83,18 @@ public class InvoicesActivity extends AppCompatActivity {
         }
     }
 
-    //alert dialog for downloadDialog
+    private void writeFile() {
+        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE);
+        } else {
+            WriteToFile();
+        }
+    }
+
     private static AlertDialog showDialog(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo) {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
         downloadDialog.setTitle(title);
@@ -153,24 +155,21 @@ public class InvoicesActivity extends AppCompatActivity {
         switch (requestCode)
         {
             case REQUEST_WRITE_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    WriteFile();
-                } else
-                {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    WriteToFile();
+                } else {
                     Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
                 }
             }
         }
     }
 
-    private void WriteFile() {
+    private void WriteToFile() {
         String rows = new String();
         for (String row:
                 invoices) {
             rows += row + "\n";
         }
-        invoices = new ArrayList<>();
 
         writeToFile(rows);
     }

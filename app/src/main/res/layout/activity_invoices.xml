@@ -15,5 +15,6 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:navigationIcon="?attr/homeAsUpIndicator"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 </LinearLayout>
