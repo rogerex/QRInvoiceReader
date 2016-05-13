@@ -13,6 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Select;
+
+import java.util.Date;
+import java.util.List;
+
+import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
+
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +36,12 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setIndeterminate(true);
         listView.setEmptyView(progressBar);
 
-        String[] values = new String[] { "Form 01",
-                "Form 02",
-        };
+        ActiveAndroid.initialize(this);
+
+        InvoiceForm form = new InvoiceForm("Form 01", new Date(), 1600);
+        form.save();
+
+        String[] values = getInvoiceForms();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
         listView.setAdapter(adapter);
@@ -48,6 +59,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private String[] getInvoiceForms() {
+        List<InvoiceForm> invoices = new Select()
+                .from(InvoiceForm.class)
+                .orderBy("Name ASC")
+                .execute();
+
+        String[] array = new String[invoices.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = invoices.get(i).name;
+        }
+        return array;
     }
 
     @Override
