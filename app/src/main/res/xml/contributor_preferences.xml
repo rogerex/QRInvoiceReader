@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="pref_contributor_nit_ci"
+        android:title="NIT/CI"
+        android:summary="Contributor identification."
+        android:inputType="number" />
+
+    <PreferenceCategory
+        android:title="Complete Name"
+        android:key="pref_contributor">
+        <EditTextPreference
+            android:key="pref_contributor_name"
+            android:title="Name"
+            android:summary="Contributor Name." />
+        <EditTextPreference
+            android:key="pref_contributor_first_last_name"
+            android:title="First Last Name"
+            android:summary="Contributor First Last Name." />
+        <EditTextPreference
+            android:key="pref_contributor_second_last_name"
+            android:title="Second Last Name"
+            android:summary="Contributor Second Last Name."  />
+    </PreferenceCategory>
+</PreferenceScreen>

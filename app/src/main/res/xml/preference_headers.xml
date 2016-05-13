@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header android:fragment="bo.bumbay.qrinvoicereader.SettingsActivity$ContributorSettingsFragment"
+        android:title="Contributor"
+        android:summary="Contributor profile settings." />
+    <header android:fragment="bo.bumbay.qrinvoicereader.SettingsActivity$DefaultSettingsFragment"
+        android:title="Default Values"
+        android:summary="Default values settings." />
+    <header android:fragment="bo.bumbay.qrinvoicereader.SettingsActivity$ValidationSettingsFragment"
+        android:title="Validations"
+        android:summary="Reader validations." />
+
+</preference-headers>
