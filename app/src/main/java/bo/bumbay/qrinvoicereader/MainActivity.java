@@ -59,10 +59,16 @@ public class MainActivity extends AppCompatActivity {
                 readQRCode();
                 return true;
             case R.id.action_settings:
+                settings();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void settings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void writeFileActionPerformed(View v) {

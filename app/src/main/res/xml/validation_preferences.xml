@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="pref_validation_nit_ci"
+        android:title="NIT/CI"
+        android:summary="Validate NIT/CI."
+        android:defaultValue="false" />
+    <EditTextPreference
+        android:key="pref_validation_min_amount"
+        android:title="Amount"
+        android:summary="Minimum amount."
+        android:inputType="number" />
+</PreferenceScreen>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="pref_default_email"
+        android:title="Email"
+        android:summary="Email to send the file."
+        android:inputType="textEmailAddress" />
+    <EditTextPreference
+        android:key="pref_default_target_total"
+        android:title="Target total"
+        android:summary="Target total number."
+        android:inputType="number" />
+</PreferenceScreen>
