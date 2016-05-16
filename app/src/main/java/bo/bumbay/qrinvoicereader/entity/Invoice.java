@@ -26,7 +26,7 @@ public class Invoice extends Model {
     @Column(name = "Control")
     public String control;
 
-    @Column(name = "InvoiceForm")
+    @Column(name = "InvoiceForm", onDelete = Column.ForeignKeyAction.CASCADE)
     public InvoiceForm form;
 
     public Invoice() {

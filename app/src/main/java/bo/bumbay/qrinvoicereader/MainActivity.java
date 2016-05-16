@@ -13,10 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
 
-import java.util.Date;
 import java.util.List;
 
 import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
@@ -35,11 +33,6 @@ public class MainActivity extends AppCompatActivity {
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.setIndeterminate(true);
         listView.setEmptyView(progressBar);
-
-        ActiveAndroid.initialize(this);
-
-        InvoiceForm form = new InvoiceForm("Form 01", new Date(), 1600);
-        form.save();
 
         String[] values = getInvoiceForms();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,

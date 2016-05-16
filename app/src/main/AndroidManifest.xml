@@ -3,20 +3,19 @@
     package="bo.bumbay.qrinvoicereader">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="QR Invoice Reader"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:name="com.activeandroid.app.Application">
 
         <meta-data android:name="AA_DB_NAME" android:value="Invoices.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="2" />
-        <meta-data
-            android:name="AA_MODELS"
-            android:value="bo.bumbay.qrinvoicereader.entity.Invoice, bo.bumbay.qrinvoicereader.entity.InvoiceForm" />
+        <meta-data android:name="AA_DB_VERSION" android:value="3" />
+        <meta-data android:name="AA_MODELS" android:value="bo.bumbay.qrinvoicereader.entity.Invoice, bo.bumbay.qrinvoicereader.entity.InvoiceForm" />
 
         <activity
             android:name=".MainActivity"
