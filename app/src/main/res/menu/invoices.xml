@@ -5,8 +5,16 @@
         android:id="@+id/action_invoices_qr_code"
         android:title="QR Code"
         app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/action_invoices_write_file"
-        android:title="Write File"
+    <item
+        android:id="@+id/action_invoices_form_edit"
+        android:title="Edit"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_invoices_write_file"
+        android:title="Write file"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_invoices_send_file"
+        android:title="Send file"
+        app:showAsAction="never"/>
 </menu>

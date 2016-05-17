@@ -11,15 +11,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-
-import com.activeandroid.query.Select;
-
-import java.util.List;
-
-import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
 
 public class MainActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,41 +24,34 @@ public class MainActivity extends AppCompatActivity {
 
         final ListView listView = (ListView) findViewById(R.id.form_list);
 
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-        listView.setEmptyView(progressBar);
-
-        String[] values = getInvoiceForms();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+                android.R.layout.simple_list_item_1, android.R.id.text1, options());
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                String itemValue = (String)listView.getItemAtPosition(position);
-
-                Intent intent = new Intent(MainActivity.this, InvoicesActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("formId", position);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                switch (position) {
+                    case 0: // Documents
+                        Intent intent = new Intent(MainActivity.this, FileManagerActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1: // Recycle Trash
+                        break;
+                    case 2: // Bucket
+                        break;
+                }
             }
         });
     }
 
-    private String[] getInvoiceForms() {
-        List<InvoiceForm> invoices = new Select()
-                .from(InvoiceForm.class)
-                .orderBy("Name ASC")
-                .execute();
-
-        String[] array = new String[invoices.size()];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = invoices.get(i).name;
-        }
-        return array;
+    private String[] options() {
+        return new String[] {
+                "Documents",
+                "Recycle Trash",
+                "Bucket"
+        };
     }
 
     @Override
@@ -78,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_main_add_form:
-                addForm();
+            case R.id.action_main_insights:
+                insights();
                 return true;
             case R.id.action_main_settings:
                 settings();
@@ -89,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addForm() {
+    public void insights() {
     }
 
     public void settings() {

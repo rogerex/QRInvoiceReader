@@ -17,6 +17,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -24,6 +27,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.List;
+
+import bo.bumbay.qrinvoicereader.entity.Invoice;
+import bo.bumbay.qrinvoicereader.repository.InvoiceRepository;
 
 public class InvoicesActivity extends AppCompatActivity {
 
@@ -35,20 +42,34 @@ public class InvoicesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        invoices = getInvoices();
         setContentView(R.layout.activity_invoices);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.invoices_toolbar);
         setSupportActionBar(myToolbar);
+
+        ListView listView = (ListView) findViewById(R.id.invoice_list);
+
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setIndeterminate(true);
+        listView.setEmptyView(progressBar);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, getInvoices());
+        listView.setAdapter(adapter);
     }
 
-    private ArrayList<String> getInvoices() {
+    private String[] getInvoices() {
         Bundle bundle = getIntent().getExtras();
         int formId = -1;
         if(bundle != null)
             formId = bundle.getInt("formId");
 
-        return new ArrayList<String>();
+        List<Invoice> invoices = InvoiceRepository.getInvoices(formId);
+        String[] array = new String[invoices.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = invoices.get(i).number;
+        }
+        return array;
     }
 
     @Override

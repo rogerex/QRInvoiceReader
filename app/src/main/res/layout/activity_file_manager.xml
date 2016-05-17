@@ -7,19 +7,21 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:orientation="vertical"
-    tools:context=".InvoicesActivity">
+    tools:context=".FileManagerActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/invoices_toolbar"
+        android:id="@+id/file_manager_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:navigationIcon="?attr/homeAsUpIndicator"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <ListView
-        android:id="@+id/invoice_list"
+        android:id="@+id/file_list"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"/>
+
 </LinearLayout>
