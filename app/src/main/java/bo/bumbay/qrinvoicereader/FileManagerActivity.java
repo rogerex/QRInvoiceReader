@@ -1,6 +1,7 @@
 package bo.bumbay.qrinvoicereader;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,10 +9,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import bo.bumbay.qrinvoicereader.cursor.FileCursorAdapter;
 import bo.bumbay.qrinvoicereader.repository.FileManagerRepository;
 
 public class FileManagerActivity extends AppCompatActivity {
@@ -30,9 +31,9 @@ public class FileManagerActivity extends AppCompatActivity {
         progressBar.setIndeterminate(true);
         listView.setEmptyView(progressBar);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, FileManagerRepository.getInvoiceForms());
-        listView.setAdapter(adapter);
+        Cursor todoCursor = FileManagerRepository.getCursorForInvoiceForms();
+        FileCursorAdapter todoAdapter = new FileCursorAdapter(this, todoCursor);
+        listView.setAdapter(todoAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -40,7 +41,7 @@ public class FileManagerActivity extends AppCompatActivity {
                                     int position, long id) {
                 Intent intent = new Intent(FileManagerActivity.this, InvoicesActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putInt("formId", position);
+                bundle.putLong("formId", id);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

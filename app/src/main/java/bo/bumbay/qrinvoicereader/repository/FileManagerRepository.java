@@ -1,22 +1,32 @@
 package bo.bumbay.qrinvoicereader.repository;
 
-import com.activeandroid.query.Select;
+import android.database.Cursor;
 
-import java.util.List;
+import com.activeandroid.Cache;
+import com.activeandroid.query.Select;
 
 import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
 
 public class FileManagerRepository {
-    public static String[] getInvoiceForms() {
-        List<InvoiceForm> invoices = new Select()
+    public static InvoiceForm getInvoiceForm(long formId) {
+        return new Select()
                 .from(InvoiceForm.class)
-                .orderBy("Name ASC")
-                .execute();
+                .where("Id = ?", formId)
+                .executeSingle();
+    }
 
-        String[] array = new String[invoices.size()];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = invoices.get(i).name;
-        }
-        return array;
+    public static Cursor getCursorForInvoiceForms() {
+        String tableName = Cache.getTableInfo(InvoiceForm.class).getTableName();
+        String resultRecords = new Select(tableName + ".*, " + tableName + ".Id as _id").
+                from(InvoiceForm.class).
+                orderBy("Name ASC").
+                toSql();
+
+        Cursor resultCursor = Cache.openDatabase().rawQuery(resultRecords, null);
+        return resultCursor;
+    }
+
+    public static void save(InvoiceForm form) {
+        form.save();
     }
 }

@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -17,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -26,18 +26,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
+import bo.bumbay.qrinvoicereader.cursor.InvoiceCursorAdapter;
 import bo.bumbay.qrinvoicereader.entity.Invoice;
+import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
+import bo.bumbay.qrinvoicereader.repository.FileManagerRepository;
 import bo.bumbay.qrinvoicereader.repository.InvoiceRepository;
 
 public class InvoicesActivity extends AppCompatActivity {
 
     private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private static final int REQUEST_WRITE_STORAGE = 112;
-
-    private ArrayList<String> invoices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,23 +57,18 @@ public class InvoicesActivity extends AppCompatActivity {
         progressBar.setIndeterminate(true);
         listView.setEmptyView(progressBar);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, getInvoices());
-        listView.setAdapter(adapter);
+        Cursor todoCursor = InvoiceRepository.getCursorForInvoices(getId());
+        InvoiceCursorAdapter todoAdapter = new InvoiceCursorAdapter(this, todoCursor);
+        listView.setAdapter(todoAdapter);
     }
 
-    private String[] getInvoices() {
+    private long getId() {
         Bundle bundle = getIntent().getExtras();
-        int formId = -1;
+        long formId = -1;
         if(bundle != null)
-            formId = bundle.getInt("formId");
+            formId = bundle.getLong("formId");
 
-        List<Invoice> invoices = InvoiceRepository.getInvoices(formId);
-        String[] array = new String[invoices.size()];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = invoices.get(i).number;
-        }
-        return array;
+        return formId;
     }
 
     @Override
@@ -86,8 +85,14 @@ public class InvoicesActivity extends AppCompatActivity {
             case R.id.action_invoices_qr_code:
                 readQRCode();
                 return true;
+            case R.id.action_invoices_form_edit:
+                editForm();
+                return true;
             case R.id.action_invoices_write_file:
                 writeFile();
+                return true;
+            case R.id.action_invoices_send_file:
+                sendFile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -104,6 +109,9 @@ public class InvoicesActivity extends AppCompatActivity {
         }
     }
 
+    private void editForm() {
+    }
+
     private void writeFile() {
         boolean hasPermission = (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
@@ -112,8 +120,11 @@ public class InvoicesActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_STORAGE);
         } else {
-            WriteToFile();
+            writeToFile();
         }
+    }
+
+    private void sendFile() {
     }
 
     private static AlertDialog showDialog(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo) {
@@ -143,20 +154,65 @@ public class InvoicesActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-                Toast toast = Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG);
-                toast.show();
+                Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG).show();
 
-                invoices.add(contents);
+                InvoiceForm form = FileManagerRepository.getInvoiceForm(getId());
+                String[] parts = contents.split("[|]");
+
+                Invoice newInvoice = new Invoice(parts[2], parts[0], parts[1], getDate(parts[3]), getAmount(parts[5]), parts[6], parts[7], contents, form);
+                InvoiceRepository.save(newInvoice);
             }
         }
     }
 
-    private void writeToFile(String data) {
+    private int getAmount(String part) {
+        int newAmount;
+        double amount = Double.parseDouble(part);
+        if (0.5 <= (amount - (int)amount)) {
+            newAmount = (int)(amount + 1);
+        } else {
+            newAmount = (int)amount;
+        }
+        return newAmount;
+    }
+
+    private Date getDate(String part) {
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        Date date;
         try {
-            File file = new File(Environment.getExternalStorageDirectory() + File.separator + "bills.txt");
+            date = formatter.parse(part);
+        } catch (ParseException e) {
+            date = null;
+        }
+        return date;
+    }
+
+    private String getInvoicesData() {
+        String data = new String();
+        for (Invoice invoice : InvoiceRepository.getInvoices(getId())) {
+            data += getInvoiceFormat(invoice) + "\n";
+        }
+        return data;
+    }
+
+    private String getInvoiceFormat(Invoice invoice) {
+        String separator = "\t";
+        String row = invoice.nit + separator;
+        row += invoice.number + separator;
+        row += invoice.authorization + separator;
+        row += invoice.emissionDate + separator;
+        row += invoice.amount + separator;
+        row += invoice.controlCode;
+        return row;
+    }
+
+    private void writeToFile() {
+        try {
+            String data = getInvoicesData();
+            File file = new File(Environment.getExternalStorageDirectory() + File.separator + "invoices.txt");
             file.createNewFile();
 
-            if(file.exists()) {
+            if (file.exists()) {
                 FileOutputStream outputFile = new FileOutputStream(file);
 
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputFile);
@@ -165,33 +221,21 @@ public class InvoicesActivity extends AppCompatActivity {
             }
         }
         catch (IOException e) {
-            Toast toast = Toast.makeText(this, "Cannot save the file.", Toast.LENGTH_LONG);
-            toast.show();
+            Toast.makeText(this, "The app was not able to save the file.", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode)
-        {
+        switch (requestCode) {
             case REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    WriteToFile();
+                    writeToFile();
                 } else {
                     Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
                 }
             }
         }
-    }
-
-    private void WriteToFile() {
-        String rows = new String();
-        for (String row:
-                invoices) {
-            rows += row + "\n";
-        }
-
-        writeToFile(rows);
     }
 }

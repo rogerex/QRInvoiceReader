@@ -17,14 +17,20 @@ public class Invoice extends Model {
     @Column(name = "Number")
     public String number;
 
-    @Column(name = "Date")
-    public Date date;
+    @Column(name = "EmissionDate")
+    public Date emissionDate;
 
     @Column(name = "Amount")
     public int amount;
 
-    @Column(name = "Control")
-    public String control;
+    @Column(name = "ControlCode")
+    public String controlCode;
+
+    @Column(name = "Owner")
+    public String owner;
+
+    @Column(name = "OriginalText")
+    public String originalText;
 
     @Column(name = "InvoiceForm", onDelete = Column.ForeignKeyAction.CASCADE)
     public InvoiceForm form;
@@ -33,14 +39,16 @@ public class Invoice extends Model {
         super();
     }
 
-    public Invoice(String authorization, String nit, String number, Date date, int amount, String control, InvoiceForm form) {
+    public Invoice(String authorization, String nit, String number, Date emissionDate, int amount, String controlCode, String owner, String originalText, InvoiceForm form) {
         super();
         this.authorization = authorization;
         this.nit = nit;
         this.number = number;
-        this.date = date;
+        this.emissionDate = emissionDate;
         this.amount = amount;
-        this.control = control;
+        this.controlCode = controlCode;
         this.form = form;
+        this.owner = owner;
+        this.originalText = originalText;
     }
 }

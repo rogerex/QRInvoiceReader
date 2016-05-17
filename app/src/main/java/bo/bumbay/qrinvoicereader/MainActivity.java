@@ -1,6 +1,8 @@
 package bo.bumbay.qrinvoicereader;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.util.Date;
+
+import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
+import bo.bumbay.qrinvoicereader.repository.FileManagerRepository;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        createDefaultForms();
     }
 
     private String[] options() {
@@ -82,5 +91,17 @@ public class MainActivity extends AppCompatActivity {
     public void settings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    private void createDefaultForms() {
+        String PREFERENCE_FIRST_RUN = "Fixtures";
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firstRun = p.getBoolean(PREFERENCE_FIRST_RUN, true);
+        p.edit().putBoolean(PREFERENCE_FIRST_RUN, false).commit();
+
+        if (firstRun) {
+            InvoiceForm form = new InvoiceForm("Form 01", new Date(), 1600);
+            FileManagerRepository.save(form);
+        }
     }
 }

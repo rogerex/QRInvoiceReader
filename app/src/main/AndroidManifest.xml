@@ -17,7 +17,7 @@
             android:value="Invoices.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="3" />
+            android:value="5" />
         <meta-data
             android:name="AA_MODELS"
             android:value="bo.bumbay.qrinvoicereader.entity.Invoice, bo.bumbay.qrinvoicereader.entity.InvoiceForm" />
