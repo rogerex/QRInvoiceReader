@@ -53,9 +53,13 @@ public class InvoicesActivity extends AppCompatActivity {
         progressBar.setIndeterminate(true);
         listView.setEmptyView(progressBar);
 
-        Cursor todoCursor = InvoiceRepository.getCursorForInvoices(getId());
-        InvoiceCursorAdapter todoAdapter = new InvoiceCursorAdapter(this, todoCursor);
-        listView.setAdapter(todoAdapter);
+        loadInvoices(listView);
+    }
+
+    private void loadInvoices(ListView listView) {
+        Cursor cursor = InvoiceRepository.getCursorForInvoices(getId());
+        InvoiceCursorAdapter adapter = new InvoiceCursorAdapter(this, cursor);
+        listView.setAdapter(adapter);
     }
 
     private long getId() {
@@ -150,9 +154,19 @@ public class InvoicesActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-                Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG).show();
 
                 InvoiceForm form = FileManagerRepository.getInvoiceForm(getId());
+
+                // Validations
+                for (Invoice invoice:
+                     form.invoices()) {
+                    if (invoice.originalText.equalsIgnoreCase(contents)) {
+                        Toast.makeText(this, "This invoice is already in invoices.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
+                Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG).show();
                 String[] parts = contents.split("[|]");
 
                 Invoice newInvoice = new Invoice(parts[2], parts[0], parts[1], DateFormatter.parse(parts[3]), getAmount(parts[5]), parts[6], parts[7], contents, form);
@@ -222,5 +236,12 @@ public class InvoicesActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ListView listView = (ListView) findViewById(R.id.invoice_list);
+        loadInvoices(listView);
     }
 }
