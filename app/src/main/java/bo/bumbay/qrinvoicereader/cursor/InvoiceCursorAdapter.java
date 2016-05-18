@@ -8,12 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import bo.bumbay.qrinvoicereader.R;
+import bo.bumbay.qrinvoicereader.common.DateFormatter;
 
 public class InvoiceCursorAdapter extends CursorAdapter {
     public InvoiceCursorAdapter(Context context, Cursor cursor) {
@@ -40,7 +36,7 @@ public class InvoiceCursorAdapter extends CursorAdapter {
         String number = cursor.getString(cursor.getColumnIndexOrThrow("Number"));
         String authorization = cursor.getString(cursor.getColumnIndexOrThrow("Authorization"));
         String controlCode = cursor.getString(cursor.getColumnIndexOrThrow("ControlCode"));
-        String emissionDate = getDate(cursor.getString(cursor.getColumnIndexOrThrow("EmissionDate")));
+        String emissionDate = DateFormatter.format(cursor.getString(cursor.getColumnIndexOrThrow("EmissionDate")));
         String owner = cursor.getString(cursor.getColumnIndexOrThrow("Owner"));
 
         amountLabel.setText(amount);
@@ -50,21 +46,5 @@ public class InvoiceCursorAdapter extends CursorAdapter {
         controlCodeLabel.setText(controlCode);
         emissionDateLabel.setText(emissionDate);
         ownerLabel.setText(owner);
-    }
-
-    private String getDate(String part) {
-        if (part == null) {
-            return "";
-        }
-
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        String format;
-        try {
-            Date date = new Date(Long.parseLong(part));
-            format = formatter.format(date);
-        } catch (Exception e) {
-            format = "";
-        }
-        return format;
     }
 }

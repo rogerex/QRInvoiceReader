@@ -26,12 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
+import bo.bumbay.qrinvoicereader.common.DateFormatter;
 import bo.bumbay.qrinvoicereader.cursor.InvoiceCursorAdapter;
 import bo.bumbay.qrinvoicereader.entity.Invoice;
 import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
@@ -159,7 +155,7 @@ public class InvoicesActivity extends AppCompatActivity {
                 InvoiceForm form = FileManagerRepository.getInvoiceForm(getId());
                 String[] parts = contents.split("[|]");
 
-                Invoice newInvoice = new Invoice(parts[2], parts[0], parts[1], getDate(parts[3]), getAmount(parts[5]), parts[6], parts[7], contents, form);
+                Invoice newInvoice = new Invoice(parts[2], parts[0], parts[1], DateFormatter.parse(parts[3]), getAmount(parts[5]), parts[6], parts[7], contents, form);
                 InvoiceRepository.save(newInvoice);
             }
         }
@@ -176,17 +172,6 @@ public class InvoicesActivity extends AppCompatActivity {
         return newAmount;
     }
 
-    private Date getDate(String part) {
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        Date date;
-        try {
-            date = formatter.parse(part);
-        } catch (ParseException e) {
-            date = null;
-        }
-        return date;
-    }
-
     private String getInvoicesData() {
         String data = new String();
         for (Invoice invoice : InvoiceRepository.getInvoices(getId())) {
@@ -200,7 +185,7 @@ public class InvoicesActivity extends AppCompatActivity {
         String row = invoice.nit + separator;
         row += invoice.number + separator;
         row += invoice.authorization + separator;
-        row += invoice.emissionDate + separator;
+        row += DateFormatter.format(invoice.emissionDate) + separator;
         row += invoice.amount + separator;
         row += invoice.controlCode;
         return row;
