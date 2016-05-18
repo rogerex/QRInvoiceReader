@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -31,9 +32,7 @@ public class FileManagerActivity extends AppCompatActivity {
         progressBar.setIndeterminate(true);
         listView.setEmptyView(progressBar);
 
-        Cursor todoCursor = FileManagerRepository.getCursorForInvoiceForms();
-        FileCursorAdapter todoAdapter = new FileCursorAdapter(this, todoCursor);
-        listView.setAdapter(todoAdapter);
+        loadFiles(listView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -48,11 +47,40 @@ public class FileManagerActivity extends AppCompatActivity {
         });
     }
 
+    private void loadFiles(ListView listView) {
+        Cursor cursor = FileManagerRepository.getCursorForInvoiceForms();
+        FileCursorAdapter adapter = new FileCursorAdapter(this, cursor);
+        listView.setAdapter(adapter);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.file_manager, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_file_manager_add_form:
+                addForm();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void addForm() {
+        Intent intent = new Intent(this, CreateFormActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ListView listView = (ListView) findViewById(R.id.file_list);
+        loadFiles(listView);
     }
 }

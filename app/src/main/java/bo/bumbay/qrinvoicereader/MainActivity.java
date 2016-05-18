@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         p.edit().putBoolean(PREFERENCE_FIRST_RUN, false).commit();
 
         if (firstRun) {
-            InvoiceForm form = new InvoiceForm("Form 01", new Date(), 1600);
+            InvoiceForm form = new InvoiceForm("Form 01", new Date(), 1600, false);
             FileManagerRepository.save(form);
         }
     }

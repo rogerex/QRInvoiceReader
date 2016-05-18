@@ -18,23 +18,27 @@ public class InvoiceForm extends Model {
     @Column(name = "ModifiedDate")
     public Date modifiedDate;
 
-    @Column(name = "DueDate")
-    public Date dueDate;
+    @Column(name = "PresentationDate")
+    public Date presentationDate;
 
-    @Column(name = "TargetTotal")
-    public int targetTotal;
+    @Column(name = "TargetAmount")
+    public int targetAmount;
+
+    @Column(name = "Blocked")
+    public boolean blocked;
 
     public InvoiceForm() {
         super();
     }
 
-    public InvoiceForm(String name, Date dueDate, int targetTotal) {
+    public InvoiceForm(String name, Date dueDate, int targetTotal, boolean blocked) {
         super();
         this.name = name;
-        this.dueDate = dueDate;
+        this.presentationDate = dueDate;
         this.createdDate = new Date();
         this.modifiedDate = createdDate;
-        this.targetTotal = targetTotal;
+        this.targetAmount = targetTotal;
+        this.blocked = blocked;
     }
 
     public List<Invoice> invoices() {
