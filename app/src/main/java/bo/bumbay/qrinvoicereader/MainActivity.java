@@ -16,10 +16,15 @@ import android.widget.ListView;
 
 import java.util.Date;
 
+import bo.bumbay.qrinvoicereader.entity.Folder;
 import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
 import bo.bumbay.qrinvoicereader.repository.FileManagerRepository;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    private static final String PREFERENCE_FIRST_RUN = "partitionsCreated";
+    private static final String PREFERENCE_DOCUMENTS_ID = "documentsId";
+    private static final String PREFERENCE_RECYCLE_BIN_ID = "recycleBinId";
+    private static final String PREFERENCE_BUCKET_ID = "bucketId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +40,9 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, android.R.id.text1, options());
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                switch (position) {
-                    case 0: // Documents
-                        Intent intent = new Intent(MainActivity.this, FileManagerActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 1: // Recycle Trash
-                        break;
-                    case 2: // Bucket
-                        break;
-                }
-            }
-        });
+        listView.setOnItemClickListener(this);
 
-        createDefaultForms();
+        createStaticItems();
     }
 
     private String[] options() {
@@ -93,15 +83,56 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void createDefaultForms() {
-        String PREFERENCE_FIRST_RUN = "Fixtures";
+    private void createStaticItems() {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
         boolean firstRun = p.getBoolean(PREFERENCE_FIRST_RUN, true);
         p.edit().putBoolean(PREFERENCE_FIRST_RUN, false).commit();
 
         if (firstRun) {
-            InvoiceForm form = new InvoiceForm("Form 01", new Date(), 1600, false);
-            FileManagerRepository.save(form);
+            Folder documents = new Folder("Documents");
+            FileManagerRepository.save(documents);
+
+            Folder recycleBin = new Folder("Recycle Bin");
+            FileManagerRepository.save(recycleBin);
+
+            Folder bucketFolder = new Folder("Bucket Folder");
+            FileManagerRepository.save(bucketFolder);
+
+            InvoiceForm bucket = new InvoiceForm("Bucket", new Date(), 0, false, bucketFolder);
+            FileManagerRepository.save(bucket);
+
+            p.edit().putLong(PREFERENCE_DOCUMENTS_ID, documents.getId()).commit();
+            p.edit().putLong(PREFERENCE_RECYCLE_BIN_ID, recycleBin.getId()).commit();
+            p.edit().putLong(PREFERENCE_BUCKET_ID, bucket.getId()).commit();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        switch (position) {
+            case 0: // Documents
+                Intent intent1 = new Intent(MainActivity.this, FileManagerActivity.class);
+                Bundle bundle1 = new Bundle();
+                bundle1.putLong("id", preferences.getLong(PREFERENCE_DOCUMENTS_ID, 0));
+                intent1.putExtras(bundle1);
+                startActivity(intent1);
+                break;
+            case 1: // Recycle Trash
+                Intent intent2 = new Intent(MainActivity.this, FileManagerActivity.class);
+                Bundle bundle2 = new Bundle();
+                bundle2.putLong("id", preferences.getLong(PREFERENCE_RECYCLE_BIN_ID, 0));
+                intent2.putExtras(bundle2);
+                startActivity(intent2);
+                break;
+            case 2: // Bucket
+                Intent intent3 = new Intent(MainActivity.this, InvoicesActivity.class);
+                Bundle bundle3 = new Bundle();
+                bundle3.putLong("id", preferences.getLong(PREFERENCE_BUCKET_ID, 0));
+                intent3.putExtras(bundle3);
+                startActivity(intent3);
+                break;
         }
     }
 }

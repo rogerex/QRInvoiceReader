@@ -5,9 +5,17 @@ import android.database.Cursor;
 import com.activeandroid.Cache;
 import com.activeandroid.query.Select;
 
+import bo.bumbay.qrinvoicereader.entity.Folder;
 import bo.bumbay.qrinvoicereader.entity.InvoiceForm;
 
 public class FileManagerRepository {
+    public static Folder getFolder(long id) {
+        return new Select()
+                .from(Folder.class)
+                .where("Id = ?", id)
+                .executeSingle();
+    }
+
     public static InvoiceForm getInvoiceForm(long formId) {
         return new Select()
                 .from(InvoiceForm.class)
@@ -15,18 +23,22 @@ public class FileManagerRepository {
                 .executeSingle();
     }
 
-    public static Cursor getCursorForInvoiceForms() {
+    public static Cursor getCursorForInvoiceForms(long id) {
         String tableName = Cache.getTableInfo(InvoiceForm.class).getTableName();
         String resultRecords = new Select(tableName + ".*, " + tableName + ".Id as _id").
                 from(InvoiceForm.class).
+                where("Folder = ?", id).
                 orderBy("Name ASC").
                 toSql();
 
-        Cursor resultCursor = Cache.openDatabase().rawQuery(resultRecords, null);
-        return resultCursor;
+        return Cache.openDatabase().rawQuery(resultRecords, new String[]{ id + "" });
     }
 
     public static void save(InvoiceForm form) {
         form.save();
+    }
+
+    public static void save(Folder folder) {
+        folder.save();
     }
 }

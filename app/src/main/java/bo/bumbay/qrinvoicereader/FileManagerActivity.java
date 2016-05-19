@@ -40,7 +40,7 @@ public class FileManagerActivity extends AppCompatActivity {
                                     int position, long id) {
                 Intent intent = new Intent(FileManagerActivity.this, InvoicesActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putLong("formId", id);
+                bundle.putLong("id", id);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -48,7 +48,7 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void loadFiles(ListView listView) {
-        Cursor cursor = FileManagerRepository.getCursorForInvoiceForms();
+        Cursor cursor = FileManagerRepository.getCursorForInvoiceForms(getId());
         FileCursorAdapter adapter = new FileCursorAdapter(this, cursor);
         listView.setAdapter(adapter);
     }
@@ -74,6 +74,9 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private void addForm() {
         Intent intent = new Intent(this, CreateFormActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong("id", getId());
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 
@@ -82,5 +85,18 @@ public class FileManagerActivity extends AppCompatActivity {
         super.onResume();
         ListView listView = (ListView) findViewById(R.id.file_list);
         loadFiles(listView);
+    }
+
+    private long getId() {
+        Bundle bundle = getIntent().getExtras();
+        long formId;
+        if(bundle != null) {
+            formId = bundle.getLong("id");
+        } else {
+            formId = -1;
+            finish();
+        }
+
+        return formId;
     }
 }

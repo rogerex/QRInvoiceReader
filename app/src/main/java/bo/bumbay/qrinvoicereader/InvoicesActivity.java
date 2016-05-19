@@ -64,9 +64,13 @@ public class InvoicesActivity extends AppCompatActivity {
 
     private long getId() {
         Bundle bundle = getIntent().getExtras();
-        long formId = -1;
-        if(bundle != null)
-            formId = bundle.getLong("formId");
+        long formId;
+        if(bundle != null) {
+            formId = bundle.getLong("id");
+        } else {
+            formId = -1;
+            finish();
+        }
 
         return formId;
     }

@@ -75,9 +75,22 @@ public class CreateFormActivity extends AppCompatActivity {
         cal.set(year, month - 1, day, 0, 0);
         Date presentationDate = cal.getTime();
 
-        InvoiceForm form = new InvoiceForm(formName, presentationDate, targetAmount, blocked);
+        InvoiceForm form = new InvoiceForm(formName, presentationDate, targetAmount, blocked, FileManagerRepository.getFolder(getId()));
         FileManagerRepository.save(form);
 
         finish();
+    }
+
+    private long getId() {
+        Bundle bundle = getIntent().getExtras();
+        long formId;
+        if(bundle != null) {
+            formId = bundle.getLong("id");
+        } else {
+            formId = -1;
+            finish();
+        }
+
+        return formId;
     }
 }

@@ -27,18 +27,26 @@ public class InvoiceForm extends Model {
     @Column(name = "Blocked")
     public boolean blocked;
 
+    @Column(name = "IsFavorite")
+    public boolean isFavorite;
+
+    @Column(name = "Folder", onDelete = Column.ForeignKeyAction.CASCADE)
+    public Folder folder;
+
     public InvoiceForm() {
         super();
     }
 
-    public InvoiceForm(String name, Date dueDate, int targetTotal, boolean blocked) {
+    public InvoiceForm(String name, Date presentationDate, int targetTotal, boolean blocked, Folder folder) {
         super();
         this.name = name;
-        this.presentationDate = dueDate;
+        this.presentationDate = presentationDate;
         this.createdDate = new Date();
         this.modifiedDate = createdDate;
         this.targetAmount = targetTotal;
         this.blocked = blocked;
+        this.isFavorite = false;
+        this.folder = folder;
     }
 
     public List<Invoice> invoices() {
