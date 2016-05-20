@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toolbar myToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
-        final ListView listView = (ListView) findViewById(R.id.form_list);
+        final ListView listView = (ListView) findViewById(R.id.item_list);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, options());

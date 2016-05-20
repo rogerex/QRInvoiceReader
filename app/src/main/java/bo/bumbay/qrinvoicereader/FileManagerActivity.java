@@ -64,15 +64,18 @@ public class FileManagerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_file_manager_add_form:
-                addForm();
+            case R.id.action_file_manager_add_folder:
+                addFolder();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void addForm() {
+    private void addFolder() {
+    }
+
+    public void addForm(View v) {
         Intent intent = new Intent(this, CreateFormActivity.class);
         Bundle bundle = new Bundle();
         bundle.putLong("id", getId());
