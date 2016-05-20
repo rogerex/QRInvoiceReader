@@ -3,10 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_invoices_qr_code"
+        android:icon="@drawable/ic_action_invoices_qr_code"
         android:title="QR Code"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_invoices_form_edit"
+        android:icon="@drawable/ic_action_invoices_edit_form"
         android:title="Edit"
         app:showAsAction="ifRoom"/>
     <item
@@ -14,7 +16,7 @@
         android:title="Write file"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/action_invoices_send_file"
-        android:title="Send file"
+        android:id="@+id/action_invoices_share"
+        android:title="Share"
         app:showAsAction="never"/>
 </menu>

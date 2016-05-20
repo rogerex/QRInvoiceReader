@@ -95,8 +95,8 @@ public class InvoicesActivity extends AppCompatActivity {
             case R.id.action_invoices_write_file:
                 writeFile();
                 return true;
-            case R.id.action_invoices_send_file:
-                sendFile();
+            case R.id.action_invoices_share:
+                shareFile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -128,7 +128,7 @@ public class InvoicesActivity extends AppCompatActivity {
         }
     }
 
-    private void sendFile() {
+    private void shareFile() {
     }
 
     private static AlertDialog showDialog(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo) {
