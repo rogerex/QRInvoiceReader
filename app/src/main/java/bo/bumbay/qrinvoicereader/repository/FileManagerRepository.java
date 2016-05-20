@@ -34,6 +34,17 @@ public class FileManagerRepository {
         return Cache.openDatabase().rawQuery(resultRecords, new String[]{ id + "" });
     }
 
+    public static Cursor getCursorForFolders(long id) {
+        String tableName = Cache.getTableInfo(Folder.class).getTableName();
+        String resultRecords = new Select(tableName + ".*, " + tableName + ".Id as _id").
+                from(Folder.class).
+                where("Folder = ?", id).
+                orderBy("Name ASC").
+                toSql();
+
+        return Cache.openDatabase().rawQuery(resultRecords, new String[]{ id + "" });
+    }
+
     public static void save(InvoiceForm form) {
         form.save();
     }

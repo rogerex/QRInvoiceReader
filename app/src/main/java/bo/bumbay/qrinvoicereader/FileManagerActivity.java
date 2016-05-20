@@ -2,6 +2,7 @@ package bo.bumbay.qrinvoicereader;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,13 +11,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
+import bo.bumbay.qrinvoicereader.common.UpdateListener;
 import bo.bumbay.qrinvoicereader.cursor.FileCursorAdapter;
+import bo.bumbay.qrinvoicereader.cursor.FolderCursorAdapter;
 import bo.bumbay.qrinvoicereader.repository.FileManagerRepository;
 
-public class FileManagerActivity extends AppCompatActivity {
+public class FileManagerActivity extends AppCompatActivity implements UpdateListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +29,22 @@ public class FileManagerActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.file_manager_toolbar);
         setSupportActionBar(myToolbar);
 
-        ListView listView = (ListView) findViewById(R.id.file_list);
+        ListView folderListView = loadFolders();
+        ListView fileListView = loadFiles();
 
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-        listView.setEmptyView(progressBar);
+        folderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Intent intent = new Intent(FileManagerActivity.this, FileManagerActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putLong("id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
 
-        loadFiles(listView);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -47,9 +57,29 @@ public class FileManagerActivity extends AppCompatActivity {
         });
     }
 
+    private ListView loadFolders() {
+        ListView folderListView = (ListView) findViewById(R.id.folder_list);
+        loadFolders(folderListView);
+
+        return folderListView;
+    }
+
+    private ListView loadFiles() {
+        ListView fileListView = (ListView) findViewById(R.id.file_list);
+        loadFiles(fileListView);
+
+        return fileListView;
+    }
+
+    private void loadFolders(ListView listView) {
+        Cursor cursor = FileManagerRepository.getCursorForFolders(getId());
+        CursorAdapter adapter = new FolderCursorAdapter(this, cursor);
+        listView.setAdapter(adapter);
+    }
+
     private void loadFiles(ListView listView) {
         Cursor cursor = FileManagerRepository.getCursorForInvoiceForms(getId());
-        FileCursorAdapter adapter = new FileCursorAdapter(this, cursor);
+        CursorAdapter adapter = new FileCursorAdapter(this, cursor);
         listView.setAdapter(adapter);
     }
 
@@ -73,6 +103,12 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void addFolder() {
+        DialogFragment newFragment = new CreateFolderDialogFragment();
+        Bundle args = new Bundle();
+        args.putLong("id", getId());
+        newFragment.setArguments(args);
+
+        newFragment.show(getSupportFragmentManager(), "createFolder");
     }
 
     public void addForm(View v) {
@@ -86,8 +122,7 @@ public class FileManagerActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        ListView listView = (ListView) findViewById(R.id.file_list);
-        loadFiles(listView);
+        loadFiles();
     }
 
     private long getId() {
@@ -101,5 +136,10 @@ public class FileManagerActivity extends AppCompatActivity {
         }
 
         return formId;
+    }
+
+    @Override
+    public void update() {
+        loadFolders();
     }
 }

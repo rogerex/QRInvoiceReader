@@ -4,25 +4,17 @@
     android:layout_height="match_parent">
     <TableRow>
         <ImageView
-            android:id="@+id/file_icon"
-            android:src="@drawable/ic_item_file"
+            android:id="@+id/folder_icon"
+            android:src="@drawable/ic_item_folder"
             android:layout_margin="6dp"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
         <TextView
-            android:id="@+id/file_label_name"
+            android:id="@+id/folder_label_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Form 01"
+            android:text="Folder 01"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-        <TextView
-            android:id="@+id/file_label_invoices_amount"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_marginLeft="12dp"
-            android:text="(0)"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
     </TableRow>
 </TableLayout>

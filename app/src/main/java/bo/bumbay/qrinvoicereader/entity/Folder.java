@@ -20,7 +20,7 @@ public class Folder extends Model{
     @Column(name = "IsFavorite")
     public boolean isFavorite;
 
-    @Column(name = "Folder")
+    @Column(name = "Folder", onDelete = Column.ForeignKeyAction.CASCADE)
     public Folder parent;
 
     public Folder() {
@@ -33,5 +33,10 @@ public class Folder extends Model{
         this.isFavorite = false;
         this.createdDate = new Date();
         this.modifiedDate = createdDate;
+    }
+
+    public Folder(String name, Folder parent) {
+        this(name);
+        this.parent = parent;
     }
 }
