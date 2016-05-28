@@ -23,9 +23,12 @@ public class FolderCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView nameLabel = (TextView) view.findViewById(R.id.folder_label_name);
+        TextView menuControl = (TextView) view.findViewById(R.id.folder_action_menu);
 
         String name = cursor.getString(cursor.getColumnIndexOrThrow("Name"));
-
         nameLabel.setText(name);
+
+        long id = Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow("_id")));
+        menuControl.setTag(id);
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout   xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TableRow>
+
         <ImageView
             android:id="@+id/folder_icon"
             android:src="@drawable/ic_item_folder"
@@ -11,10 +11,22 @@
             android:layout_height="48dp"/>
         <TextView
             android:id="@+id/folder_label_name"
+            android:layout_margin="6dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="48dp"
+            android:gravity="center|left"
+            android:paddingLeft="60dp"
             android:text="Folder 01"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-    </TableRow>
-</TableLayout>
+        <TextView
+            android:clickable="true"
+            android:id="@+id/folder_action_menu"
+            android:layout_margin="6dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="&#8942;"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentRight="true"
+            android:onClick="showPopup"/>
+</RelativeLayout >

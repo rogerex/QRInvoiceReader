@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -141,5 +142,44 @@ public class FileManagerActivity extends AppCompatActivity implements UpdateList
     @Override
     public void update() {
         loadFolders();
+    }
+
+    public void showPopup(View v) {
+        long id = (long)v.getTag();
+        FolderItemListener listener = new FolderItemListener(id);
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.item_file_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(listener);
+        popup.show();
+    }
+
+    class FolderItemListener implements PopupMenu.OnMenuItemClickListener {
+
+        private long id;
+
+        FolderItemListener(long id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_file_rename:
+                    rename();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public void rename() {
+            DialogFragment newFragment = new UpdateFolderDialogFragment();
+            Bundle args = new Bundle();
+            args.putLong("id", id);
+            newFragment.setArguments(args);
+
+            newFragment.show(getSupportFragmentManager(), "updateFolder");
+        }
     }
 }
